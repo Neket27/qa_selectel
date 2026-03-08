@@ -1,7 +1,6 @@
 package projects.pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import projects.constants.RegistrationConstants;
 
 public class RegistrationPage extends BasePage {
@@ -9,7 +8,7 @@ public class RegistrationPage extends BasePage {
     // === Locators ===
     private static final By EMAIL_FIELD = By.id("email");
     private static final By PASSWORD_FIELD = By.id("new-password");
-    private static final By CHECKBOX = By.cssSelector("input[type='checkbox']");
+    private static final By CHECKBOX = By.cssSelector(".ant-checkbox"); //кликается не сам CHECKBOX, а элем выше
     private static final By REGISTER_BUTTON = By.cssSelector("button[type='submit']");
 
     // === Error Locators ===
@@ -47,9 +46,6 @@ public class RegistrationPage extends BasePage {
         return this;
     }
 
-    public RegistrationPage acceptAllCheckboxes() {
-        return acceptCheckbox(); // Унифицировано
-    }
 
     // === Actions ===
     public RegistrationPage clickRegister() {
@@ -62,7 +58,7 @@ public class RegistrationPage extends BasePage {
     public RegistrationPage register(String email, String password) {
         return fillEmail(email)
                 .fillPassword(password)
-                .acceptAllCheckboxes()
+                .acceptCheckbox()
                 .clickRegister();
     }
 
@@ -80,7 +76,11 @@ public class RegistrationPage extends BasePage {
     }
 
     public boolean isEmailValidationPatternErrorDisplayed() {
-        return findElement(EMAIL_PATTERN_ERROR).isDisplayed();
+        try {
+            return findElement(EMAIL_PATTERN_ERROR).isDisplayed();
+        } catch (StaleElementReferenceException | TimeoutException | NoSuchElementException e) {
+            return false;
+        }
     }
 
     // === Getters ===

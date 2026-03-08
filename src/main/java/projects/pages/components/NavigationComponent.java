@@ -1,6 +1,7 @@
 package projects.pages.components;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -18,6 +19,7 @@ public class NavigationComponent extends BasePage {
 
     // === Locators ===
     private static final By DROPDOWN_CONTAINER = By.cssSelector(".main-nav__dropdown--visible");
+    private static final By DROPDOWN_VISIBLE = By.cssSelector(".nav-dropdown[opened-menu='products']");
     private static final By MENU_LINKS = By.cssSelector(".menu-link__title, .nav-dropdown__categories-item a, nav a");
     public static final By NAV_PRODUCTS = By.cssSelector("[data-qa='main-nav__group-products']");
     public static final By NAV_SOLUTIONS = By.cssSelector("[data-qa='main-nav__group-solutions']");
@@ -35,7 +37,6 @@ public class NavigationComponent extends BasePage {
     }
     public NavigationComponent clickNavItemWithDropdown(By navButtonLocator) {
         click(navButtonLocator);
-        waitForDropdown();
         return this;
     }
     public NavigationComponent clickDropdownLink(String linkText) {
@@ -55,7 +56,11 @@ public class NavigationComponent extends BasePage {
     }
 
     public boolean isDropdownVisible() {
-        return isDisplayed(DROPDOWN_CONTAINER);
+        try {
+            return isDisplayed(DROPDOWN_CONTAINER);
+        } catch (NoSuchElementException e) {
+            return false;
+        }
     }
 
     public List<String> getDropdownLinksText() {
@@ -85,9 +90,10 @@ public class NavigationComponent extends BasePage {
         return true;
     }
 
-    // === Helper Methods ===
-
-    private void waitForDropdown() {
-            waitUntilVisible(DROPDOWN_CONTAINER);
+    public void waitForDropdownVisible() {
+        waitUntilVisible(DROPDOWN_VISIBLE);
+    }
+    public void waitForDropdownHidden() {
+       waitUntilHidden(DROPDOWN_VISIBLE);
     }
 }

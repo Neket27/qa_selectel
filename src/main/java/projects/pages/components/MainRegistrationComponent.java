@@ -5,7 +5,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import projects.constants.MainRegistrationConstants;
+import projects.constants.RegistrationConstants;
 import projects.pages.BasePage;
 
 import java.util.List;
@@ -19,20 +19,19 @@ public class MainRegistrationComponent extends BasePage {
 
     // === Locators: Password ===
     private static final By PASSWORD_INPUT = By.cssSelector("input[type='password']");
-    private static final By PASSWORD_TOOLTIP = By.cssSelector(".registration-form__pass-tooltip");
+    private static final By PASSWORD_TOOLTIP = By.xpath("//form/label[2]/span[3]");
     private static final By PASSWORD_LABEL = By.xpath("//form/label[2]/span[1]");
-    private static final By PASSWORD_ERROR = By.cssSelector(".input-label__error");
+    private static final By PASSWORD_ERROR = By.xpath("//form/label[2]/span[3]");
 
     // === Locators: Checkbox ===
     private static final By NEWS_CHECKBOX_FOR_CLICK = By.xpath("//form/label[3]/span[1]");
     private static final By NEWS_CHECKBOX_INPUT = By.xpath("//form/label[3]/span[1]/input");
 
     // === Locators: Button ===
-    private static final By REGISTER_BUTTON = By.cssSelector(".registration-form__btn");
+    private static final By REGISTER_BUTTON = By.xpath("//form/button");
 
     // === Locators: General Errors ===
     private static final By GENERAL_ERROR = By.cssSelector(".ant-alert-error");
-    private static final By SERVER_ERROR = By.cssSelector("[data-testid='server-error']");
 
     public MainRegistrationComponent(WebDriver driver) {
         super(driver);
@@ -41,12 +40,12 @@ public class MainRegistrationComponent extends BasePage {
     // === Navigation ===
 
     public MainRegistrationComponent open() {
-        openUrl(MainRegistrationConstants.MAIN_URL);
+        openUrl(RegistrationConstants.BASE_URL);
         return this;
     }
 
     public MainRegistrationComponent openRegistrationPage() {
-        openUrl(MainRegistrationConstants.REGISTRATION_URL);
+        openUrl(RegistrationConstants.REGISTRATION_URL);
         return this;
     }
 

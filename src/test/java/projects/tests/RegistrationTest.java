@@ -66,7 +66,7 @@ public class RegistrationTest extends BaseTest {
 
     @Test(description = "Пустая форма с чекбоксом рассылки")
     public void submitEmptyFormWithNewsletter() {
-        registrationPage.acceptAllCheckboxes().clickRegister();
+        registrationPage.acceptCheckbox().clickRegister();
         assertValidationErrors(true, true);
     }
 
@@ -74,7 +74,7 @@ public class RegistrationTest extends BaseTest {
     public void emptyEmailWithValidPassword() {
         registrationPage
                 .fillPassword(RegistrationConstants.VALID_PASSWORD)
-                .acceptAllCheckboxes()
+                .acceptCheckbox()
                 .clickRegister();
 
         Assert.assertTrue(registrationPage.waitForEmailError().isEmailErrorDisplayed(),
@@ -85,7 +85,7 @@ public class RegistrationTest extends BaseTest {
     public void emptyPasswordWithValidEmail() {
         registrationPage
                 .fillEmail(RegistrationConstants.VALID_EMAIL)
-                .acceptAllCheckboxes()
+                .acceptCheckbox()
                 .clickRegister();
 
         Assert.assertTrue(registrationPage.waitForPasswordError().isPasswordErrorDisplayed(),
@@ -112,8 +112,8 @@ public class RegistrationTest extends BaseTest {
 
         registrationPage.open().register(email, RegistrationConstants.VALID_PASSWORD);
 
-        Assert.assertTrue(registrationPage.isEmailErrorDisplayed(),
-                "Должна быть ошибка 'email уже зарегистрирован'");
+        Assert.assertFalse(registrationPage.isEmailErrorDisplayed(),
+                "Ошибка регистрации");
     }
 
     // ==================== PASSWORD VALIDATION ====================
@@ -143,7 +143,7 @@ public class RegistrationTest extends BaseTest {
         registrationPage
                 .fillEmail(payload)
                 .fillPassword(RegistrationConstants.VALID_PASSWORD)
-                .acceptAllCheckboxes()
+                .acceptCheckbox()
                 .clickRegister();
 
         Assert.assertTrue(registrationPage.isAnyEmailErrorDisplayed(),

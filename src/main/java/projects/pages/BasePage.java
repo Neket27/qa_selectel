@@ -69,6 +69,27 @@ public class BasePage {
         wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
+    public void waitUntilHidden(By locator) {
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(locator));
+    }
+
+    public boolean waitForNavigation(String originalUrl) {
+        return waitForNavigation(originalUrl, DEFAULT_TIMEOUT_SECONDS);
+    }
+
+    public boolean waitForNavigation(String originalUrl, int timeoutSeconds) {
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
+                    .until(d ->
+                            !d.getCurrentUrl().equals(originalUrl) ||
+                                    d.getWindowHandles().size() > 1
+                    );
+            return true;
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+
     public void waitUntilInvisible(By locator) {
         wait.until(ExpectedConditions.invisibilityOfElementLocated(locator));
     }
