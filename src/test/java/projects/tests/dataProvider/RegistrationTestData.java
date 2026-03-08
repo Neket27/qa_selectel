@@ -17,11 +17,11 @@ public class RegistrationTestData {
     @DataProvider(name = "invalidPasswords")
     public static Object[][] invalidPasswords() {
         return new Object[][]{
-                {"Short1!", "Короткий пароль"},
+                {"Short_1!", "Короткий пароль"},
                 {"NoDigitsHere!", "Без цифр"},
                 {"NoSpecialChar1", "Пароль без спецсимвола"},
                 {"alllowercase1!", "Без заглавных"},
-                {"Кириллица1!", "Кириллица в пароле"},
+                {"Pa_роль_1_!", "Кириллица в пароле"},
         };
     }
 

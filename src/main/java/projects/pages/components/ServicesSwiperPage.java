@@ -1,28 +1,39 @@
 package projects.pages.components;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import projects.constants.ServicesSwiperConstants;
 import projects.pages.BasePage;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ServicesSwiperPage extends BasePage {
 
-    // === Locators: Swiper ===
+    // === Locators  ===
     private static final By SWIPER_CONTAINER = By.cssSelector(".swiper-cards__container");
     private static final By SWIPER_WRAPPER = By.cssSelector(".swiper-wrapper");
     private static final By SWIPER_SLIDE = By.xpath("//main/div/div[1]/div/div[1]/div/div");
     private static final By SWIPER_SLIDE_ACTIVE = By.cssSelector(".swiper-slide-active");
-    private static final By SWIPER_NEXT_BUTTON = By.cssSelector(".swiper-button-next");
     private static final By SWIPER_PREV_BUTTON = By.cssSelector(".swiper-button-prev");
-    private static final By SWIPER_PAGINATION = By.cssSelector(".swiper-pagination");
     private static final By SLIDE_LINK = By.cssSelector(".swiper-slide a[href]");
+    private static final String TRANSLATE_X_PATTERN_STRING = "translate3d\\((-?\\d+\\.?\\d*)px";
+
+    // === Pattern  ===
+    private static final Pattern TRANSLATE_X_PATTERN = Pattern.compile(TRANSLATE_X_PATTERN_STRING);
+
+    // ===  Swipe Parameters  ===
+    private static final int SLIDE_WIDTH_PX = 771;
+    private static final double TRANSITION_DURATION_SECONDS = 0.3;
+    private static final int WAIT_AFTER_SWIPE_SECONDS = 1;
+    private static final String TRANSITION_TIMING_FUNCTION = "ease";
+
+    //  === JavaScript  ===
+    private static final String SET_TRANSFORM_SCRIPT =
+            "arguments[0].style.transform = 'translate3d(%dpx, 0px, 0px)';";
+    private static final String SET_TRANSITION_SCRIPT =
+            "arguments[0].style.transition = 'transform %fs %s';";
 
     public ServicesSwiperPage(WebDriver driver) {
         super(driver);
@@ -95,27 +106,23 @@ public class ServicesSwiperPage extends BasePage {
 
     public ServicesSwiperPage swipeToLeft() {
         WebElement swiperWrapper = findElement(SWIPER_WRAPPER);
-        int newX = getCurrentTranslateX(swiperWrapper) - 771;
+        int currentX = getCurrentTranslateX(swiperWrapper);
+        int newX = currentX - SLIDE_WIDTH_PX;
 
-        ((JavascriptExecutor) driver).executeScript(
-                "arguments[0].style.transform = 'translate3d(" + newX + "px, 0px, 0px)'; " +
-                        "arguments[0].style.transition = 'transform 0.3s ease';",
-                swiperWrapper
-        );
-        hardWaitSeconds(1);
+        executeSwipeScript(swiperWrapper, newX);
+        hardWaitSeconds(WAIT_AFTER_SWIPE_SECONDS);
+
         return this;
     }
 
     public ServicesSwiperPage swipeToRight() {
         WebElement swiperWrapper = findElement(SWIPER_WRAPPER);
-        int newX = getCurrentTranslateX(swiperWrapper) + 771;
+        int currentX = getCurrentTranslateX(swiperWrapper);
+        int newX = currentX + SLIDE_WIDTH_PX;
 
-        ((JavascriptExecutor) driver).executeScript(
-                "arguments[0].style.transform = 'translate3d(" + newX + "px, 0px, 0px)'; " +
-                        "arguments[0].style.transition = 'transform 0.3s ease';",
-                swiperWrapper
-        );
-        hardWaitSeconds(1);
+        executeSwipeScript(swiperWrapper, newX);
+        hardWaitSeconds(WAIT_AFTER_SWIPE_SECONDS);
+
         return this;
     }
 
@@ -153,4 +160,30 @@ public class ServicesSwiperPage extends BasePage {
         }
         return 0;
     }
+
+    public int getWrapperTranslateX() {
+        WebElement wrapper = findElement(SWIPER_WRAPPER);
+        String transform = wrapper.getAttribute("style");
+        Matcher matcher = TRANSLATE_X_PATTERN.matcher(transform);
+
+        if (matcher.find()) {
+            return (int) Double.parseDouble(matcher.group(1));
+        }
+        throw new RuntimeException("Не удалось извлечь translateX из: " + transform);
+    }
+
+    private void executeSwipeScript(WebElement element, int translateX) {
+        String transformScript = String.format(SET_TRANSFORM_SCRIPT, translateX);
+        String transitionScript = String.format(
+                SET_TRANSITION_SCRIPT,
+                TRANSITION_DURATION_SECONDS,
+                TRANSITION_TIMING_FUNCTION
+        );
+
+        ((JavascriptExecutor) driver).executeScript(
+                transformScript + " " + transitionScript,
+                element
+        );
+    }
+
 }

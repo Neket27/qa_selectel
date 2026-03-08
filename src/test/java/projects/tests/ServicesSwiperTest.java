@@ -128,22 +128,28 @@ public class ServicesSwiperTest extends BaseTest {
 
     @Test(priority = 8, description = "Свайп влево переключает слайд")
     public void checkSwipeLeftSwitchesSlide() {
-        String firstActiveSlide = swiperPage.getActiveSlideClass();
-        swiperPage.swipeToLeft();
-        String secondActiveSlide = swiperPage.getActiveSlideClass();
+        int initialTranslateX = swiperPage.getWrapperTranslateX();
 
-        Assert.assertNotEquals(firstActiveSlide, secondActiveSlide,
-                "Активный слайд не изменился после свайпа влево");
+        swiperPage.swipeToLeft();
+
+        int finalTranslateX = swiperPage.getWrapperTranslateX();
+
+        Assert.assertTrue(finalTranslateX < initialTranslateX,
+                "Слайд не сдвинулся влево. Было: " + initialTranslateX +
+                        ", стало: " + finalTranslateX);
     }
 
     @Test(priority = 9, description = "Свайп вправо переключает слайд")
     public void checkSwipeRightSwitchesSlide() {
-        String firstActiveSlide = swiperPage.getActiveSlideClass();
-        swiperPage.swipeToRight();
-        String secondActiveSlide = swiperPage.getActiveSlideClass();
+        int initialTranslateX = swiperPage.getWrapperTranslateX();
 
-        Assert.assertNotEquals(firstActiveSlide, secondActiveSlide,
-                "Активный слайд не изменился после свайпа вправо");
+        swiperPage.swipeToRight();
+
+        int finalTranslateX = swiperPage.getWrapperTranslateX();
+
+        Assert.assertTrue(finalTranslateX > initialTranslateX,
+                "Слайд не сдвинулся вправо. Было: " + initialTranslateX +
+                        ", стало: " + finalTranslateX);
     }
 
     @Test(dataProvider = "slideLinks", dataProviderClass = ServicesSwiperTestData.class,

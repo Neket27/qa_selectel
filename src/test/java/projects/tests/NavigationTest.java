@@ -16,14 +16,14 @@ import static projects.pages.components.NavigationComponent.*;
 
 public class NavigationTest extends BaseTest {
 
-    private MainPage homePage;
+    private MainPage mainPage;
     private NavigationComponent navigation;
     private String originalWindowHandle;
 
     @BeforeMethod
     public void initPage() {
-        homePage = new MainPage(getDriver()).open();
-        navigation = homePage.getNavigation();
+        mainPage = new MainPage(getDriver()).open();
+        navigation = mainPage.getNavigation();
         originalWindowHandle = getDriver().getWindowHandle();
     }
 
@@ -56,12 +56,17 @@ public class NavigationTest extends BaseTest {
                         String.join(", ", PRODUCTS_MENU_ITEMS));
     }
 
-    @Test(priority = 4, description = "Закрытие dropdown при клике вне меню")
-    public void dropdownClosesOnClickOutside() {
+    @Test(priority = 4, description = "Закрытие dropdown при повторном клике")
+    public void dropdownClosesOnClickOutside(){
+        if (navigation.isDropdownVisible()) {
+            navigation.waitForDropdownHidden();
+        }
         navigation.clickNavItemWithDropdown(NAV_PRODUCTS);
+        navigation.waitForDropdownVisible();
         Assert.assertTrue(navigation.isDropdownVisible(), "Dropdown должен быть открыт");
 
         navigation.clickNavItemWithDropdown(NAV_PRODUCTS);
+        navigation.waitForDropdownHidden();
         Assert.assertFalse(navigation.isDropdownVisible(),
                 "Dropdown должен закрыться после повторного клика");
     }
@@ -113,14 +118,12 @@ public class NavigationTest extends BaseTest {
     @Test(dataProvider = "productLinks", dataProviderClass = NavigationTestData.class,
             priority = 9, description = "Клик по ссылке в dropdown открывает страницу")
     public void clickDropdownLinkNavigates(String linkText) {
-        homePage.open();
+        mainPage.open();
         String originalUrl = getDriver().getCurrentUrl();
 
         navigation.clickNavItem(NAV_PRODUCTS).clickDropdownLink(linkText);
 
-        new WebDriverWait(getDriver(), Duration.ofSeconds(10))
-                .until(driver -> !driver.getCurrentUrl().equals(originalUrl) ||
-                        driver.getWindowHandles().size() > 1);
+        mainPage.waitForNavigation(originalUrl);
 
         Assert.assertNotEquals(getDriver().getCurrentUrl(), MAIN_URL + "/",
                 "URL не изменился после клика по ссылке '" + linkText + "'");

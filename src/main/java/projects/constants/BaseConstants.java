@@ -13,6 +13,10 @@ public class BaseConstants {
     public static final String EMAIL;
     public static final String PASSWORD;
 
+    // Timeouts
+    public static final long EXPLICIT_WAIT_SECONDS = 15;
+    public static final long WINDOW_SWITCH_WAIT_SECONDS = 15;
+
     protected BaseConstants() {
         throw new IllegalStateException("Utility class");
     }

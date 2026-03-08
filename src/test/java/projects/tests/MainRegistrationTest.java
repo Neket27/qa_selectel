@@ -4,11 +4,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import projects.constants.MainRegistrationConstants;
+import projects.constants.RegistrationConstants;
 import projects.pages.components.MainRegistrationComponent;
 import projects.tests.dataProvider.RegistrationTestData;
 
 import java.time.Duration;
+
+import static projects.constants.RegistrationConstants.MAX_EMAIL_LENGTH;
 
 public class MainRegistrationTest extends BaseTest {
 
@@ -50,7 +52,7 @@ public class MainRegistrationTest extends BaseTest {
     public void checkRedirectToProfileAfterRegistration() {
         String testEmail = "test_selectel." + System.currentTimeMillis() + "@mail.ru";
 
-        mainPage.register(testEmail, MainRegistrationConstants.VALID_PASSWORD);
+        mainPage.register(testEmail, RegistrationConstants.VALID_PASSWORD);
 
         waitForNewWindowAndSwitch();
 
@@ -67,12 +69,12 @@ public class MainRegistrationTest extends BaseTest {
     public void submitEmptyForm() {
         mainPage.clickRegister();
 
-        assertValidationErrors(true, false);
+        assertValidationErrors(true, true);
     }
 
     @Test(priority = 6, description = "Пустой email с заполненным паролем")
     public void emptyEmailWithValidPassword() {
-        mainPage.fillPassword(MainRegistrationConstants.VALID_PASSWORD)
+        mainPage.fillPassword(RegistrationConstants.VALID_PASSWORD)
                 .acceptTerms()
                 .clickRegister();
 
@@ -84,7 +86,7 @@ public class MainRegistrationTest extends BaseTest {
 
     @Test(priority = 7, description = "Пустой пароль с заполненным email")
     public void emptyPasswordWithValidEmail() {
-        mainPage.fillEmail(MainRegistrationConstants.VALID_EMAIL)
+        mainPage.fillEmail(RegistrationConstants.VALID_EMAIL)
                 .acceptTerms()
                 .clickRegister();
 
@@ -97,7 +99,7 @@ public class MainRegistrationTest extends BaseTest {
         String testEmail = "test_selectel." + System.currentTimeMillis() + "@mail.ru";
 
         mainPage.fillEmail(testEmail)
-                .fillPassword(MainRegistrationConstants.VALID_PASSWORD)
+                .fillPassword(RegistrationConstants.VALID_PASSWORD)
                 .clickRegister();
 
         waitForNewWindowAndSwitch();
@@ -114,7 +116,7 @@ public class MainRegistrationTest extends BaseTest {
     @Test(dataProvider = "invalidEmails", dataProviderClass = RegistrationTestData.class,
             priority = 9, description = "Валидация невалидных email")
     public void invalidEmailValidation(String email, String testCase) {
-        mainPage.register(email, MainRegistrationConstants.VALID_PASSWORD);
+        mainPage.register(email, RegistrationConstants.VALID_PASSWORD);
 
         Assert.assertTrue(mainPage.isEmailErrorDisplayed(),
                 "Ошибка валидации не отображается для: " + testCase);
@@ -125,7 +127,7 @@ public class MainRegistrationTest extends BaseTest {
     @Test(dataProvider = "invalidPasswords", dataProviderClass = RegistrationTestData.class,
             priority = 10, description = "Валидация невалидных паролей")
     public void invalidPasswordValidation(String password, String testCase) {
-        mainPage.fillEmail(MainRegistrationConstants.VALID_EMAIL)
+        mainPage.fillEmail(RegistrationConstants.VALID_EMAIL)
                 .fillPassword(password)
                 .clickRegister();
 
@@ -152,8 +154,8 @@ public class MainRegistrationTest extends BaseTest {
     @Test(priority = 13, description = "Проверка maxlength email поля")
     public void checkEmailMaxlength() {
         String maxlength = mainPage.getEmailField().getAttribute("maxlength");
-        Assert.assertEquals(maxlength, "250",
-                "Maxlength email поля не равен 250. Фактический: " + maxlength);
+        Assert.assertEquals(maxlength, Integer.toString(MAX_EMAIL_LENGTH),
+                "Maxlength email поля не равен "+ MAX_EMAIL_LENGTH +". Фактический: " + maxlength);
     }
 
     @Test(priority = 14, description = "Проверка type email поля")
@@ -186,8 +188,8 @@ public class MainRegistrationTest extends BaseTest {
 
     @Test(priority = 18, description = "Очистка полей при перезагрузке страницы")
     public void checkFieldsClearOnPageReload() {
-        mainPage.fillEmail(MainRegistrationConstants.VALID_EMAIL)
-                .fillPassword(MainRegistrationConstants.VALID_PASSWORD)
+        mainPage.fillEmail(RegistrationConstants.VALID_EMAIL)
+                .fillPassword(RegistrationConstants.VALID_PASSWORD)
                 .open();
 
         String emailValue = mainPage.getEmailField().getAttribute("value");
@@ -228,7 +230,7 @@ public class MainRegistrationTest extends BaseTest {
     // ==================== HELPERS ====================
 
     private void waitForNewWindowAndSwitch() {
-        WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(MainRegistrationConstants.WINDOW_SWITCH_WAIT_SECONDS));
+        WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(RegistrationConstants.WINDOW_SWITCH_WAIT_SECONDS));
         wait.until(driver -> driver.getWindowHandles().size() > 1);
 
         for (String windowHandle : getDriver().getWindowHandles()) {

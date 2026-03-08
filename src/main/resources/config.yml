@@ -1,5 +1,5 @@
 base:
-  url: https://my.selectel.ru/
+  url: https://selectel.ru
 
 login:
   email: test_selectel@mail.ru
