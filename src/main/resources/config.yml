@@ -1,0 +1,6 @@
+base:
+  url: https://my.selectel.ru/
+
+login:
+  email: test_selectel@mail.ru
+  password: Test_selectel_1
