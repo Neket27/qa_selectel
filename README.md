@@ -19,7 +19,7 @@
 Скачать JDK:
 https://adoptium.net/
 
-### macOS
+#### macOS
 ```bash
 brew install openjdk@21
 ```
