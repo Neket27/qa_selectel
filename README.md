@@ -10,7 +10,7 @@
 
 ### Установка и запуск
 1. Клонирование репозитория
-   git clone https://github.com/ваш-username/qa_selectel.git
+   git clone https://github.com/Neket27/qa_selectel
    cd qa_selectel
 
 2. Установка Java 21
